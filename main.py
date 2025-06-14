@@ -16,6 +16,11 @@ class QuantumCity(ShowBase):
         self.camera_distance = 8
         self.first_person = False
 
+        self.environment = self.loader.loadModel('models/environment')
+        self.environment.reparentTo(self.render)
+        self.environment.setScale(0.25)
+        self.environment.setPos(-8, 42, 0)
+
         self._build_city()
         self.taskMgr.add(self.update, 'update')
 
@@ -56,18 +61,34 @@ class QuantumCity(ShowBase):
         self.player.setPos(x, y, 0.5)
 
     def _build_city(self):
+        ground = self.loader.loadModel('models/box')
+        ground.reparentTo(self.render)
+        ground.setScale(50, 50, 0.1)
+        ground.setPos(0, 0, -0.05)
+        ground.setColor(0.5, 0.5, 0.5, 1)
+
         for i in range(-10, 11, 2):
             for j in range(-10, 11, 2):
                 if i == 0 and j == 0:
                     continue
-                b = self.loader.loadModel('models/box')
-                b.reparentTo(self.render)
-                sx = random.uniform(0.5, 2.0)
-                sy = random.uniform(0.5, 2.0)
-                sz = random.uniform(1.0, 6.0)
-                b.setScale(sx, sy, sz)
-                b.setPos(i * 2, j * 2, sz / 2)
-                b.setColor(random.random(), random.random(), random.random(), 1)
+                self._create_building(i * 2, j * 2)
+
+    def _create_building(self, x, y):
+        height = random.uniform(2.0, 8.0)
+        levels = random.randint(1, 3)
+        level_height = height / levels
+        base_x = random.uniform(0.8, 2.5)
+        base_y = random.uniform(0.8, 2.5)
+        cur_z = 0.0
+        for _ in range(levels):
+            b = self.loader.loadModel('models/box')
+            b.reparentTo(self.render)
+            shrink = random.uniform(0.7, 1.0)
+            b.setScale(base_x * shrink, base_y * shrink, level_height)
+            b.setPos(x, y, cur_z + level_height / 2)
+            shade = 0.4 + random.random() * 0.6
+            b.setColor(shade, shade, shade, 1)
+            cur_z += level_height
 
     def update(self, task):
         dt = globalClock.getDt()
