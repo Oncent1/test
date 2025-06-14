@@ -29,4 +29,4 @@ python main.py
 - **Q**: Quantum leap (teleport to a random location)
 - **Esc**: Quit
 
-The environment is procedurally generated with simple boxes representing buildings to create a basic futuristic city feel.
+The environment is procedurally generated with stacked box buildings and a basic backdrop for a more detailed city feel.
